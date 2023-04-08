@@ -2,6 +2,8 @@
 
 require "spec_helper"
 
+require_relative "./scenarios/default/context"
+
 SUCCESS_EXAMPLE = "generate paginated pages correctly"
 FAILURE_EXAMPLE = "raises Jekyll::Errors::InvalidConfigurationError"
 
@@ -50,6 +52,12 @@ RSpec.describe(Coffeebrew::Jekyll::Paginate) do
           sanitized_expected = sanitize_html(File.read(expected_file))
           expect(sanitized_generated).to eq sanitized_expected
         end
+      end
+    end
+
+    context CONTEXT_DEFAULT do
+      include_context CONTEXT_DEFAULT do
+        it_behaves_like SUCCESS_EXAMPLE
       end
     end
   end
