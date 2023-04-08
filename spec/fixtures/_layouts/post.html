@@ -1,0 +1,23 @@
+---
+layout: default
+---
+<h1>Posts</h1>
+<span>{{ page.title }} | {{ page.date | date: "%d %b, %Y" }}</span>
+{{ content }}
+
+{% if page.paginator %}
+<div class="pagination">
+  <ul class="pager">
+    {% if page.paginator.previous_page %}
+    <li class="previous">
+      <a href="{{ page.paginator.previous_page_path }}"><i class="fa-solid fa-arrow-left"></i> Previous Post</a>
+    </li>
+    {% endif %}
+    {% if page.paginator.next_page %}
+    <li class="next">
+      <a href="{{ page.paginator.next_page_path }}">Next Post <i class="fa-solid fa-arrow-right"></i></a>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+{% endif %}

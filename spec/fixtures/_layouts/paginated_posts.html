@@ -1,0 +1,28 @@
+---
+layout: default
+---
+<h1>Posts</h1>
+<div class="collection">
+{% for post in page.paginator.collection %}
+  <div class="item">
+    <div class="title">
+      <span>{{ post.title }} | {{ post.date | date: "%d %b, %Y" }}</span>
+    </div>
+    {{ post.content }}
+  </div>
+{% endfor %}
+</div>
+
+{% if page.paginator.total_pages > 1 %}
+<div class="pagination">
+  <ul class="pager">
+    {% for paginated_page in page.paginator.pages %}
+    <li class="page_num">
+      <a href="{{ paginated_page.paginator.current_page_path }}"{% if page.paginator.page_num_zero_index == paginated_page.paginator.page_num_zero_index %} class="current"{% endif %}>
+        {{ paginated_page.paginator.page_num_label }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
