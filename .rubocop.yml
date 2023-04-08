@@ -1,0 +1,40 @@
+inherit_from:
+  - https://raw.githubusercontent.com/rubocop/rubocop/v1.45.1/config/default.yml
+
+inherit_mode:
+  merge:
+    - Include
+    - Exclude
+
+require:
+  - rubocop-jekyll
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.7
+  Exclude:
+    - spec/fixtures/**/*
+    - spec/scenarios/**/*
+    - templates/**/*
+  NewCops: enable
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - Rakefile
+    - spec/**/*_spec.rb
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
