@@ -5,6 +5,7 @@ require "spec_helper"
 require_relative "./scenarios/default/context"
 require_relative "./scenarios/first_page_as_root/context"
 require_relative "./scenarios/filename_config/context"
+require_relative "./scenarios/page_items_config/context"
 
 SUCCESS_EXAMPLE = "generate paginated pages correctly"
 FAILURE_EXAMPLE = "raises Jekyll::Errors::InvalidConfigurationError"
@@ -71,6 +72,12 @@ RSpec.describe(Coffeebrew::Jekyll::Paginate) do
 
     context CONTEXT_FILENAME_CONFIG do
       include_context CONTEXT_FILENAME_CONFIG do
+        it_behaves_like SUCCESS_EXAMPLE
+      end
+    end
+
+    context CONTEXT_PAGE_ITEMS_CONFIG do
+      include_context CONTEXT_PAGE_ITEMS_CONFIG do
         it_behaves_like SUCCESS_EXAMPLE
       end
     end
