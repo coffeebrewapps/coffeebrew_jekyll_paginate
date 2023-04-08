@@ -1,0 +1,7 @@
+#! /bin/bash
+
+set -e
+
+script/install
+script/lint
+script/test
