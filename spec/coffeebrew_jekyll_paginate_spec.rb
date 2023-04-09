@@ -7,6 +7,8 @@ require_relative "./scenarios/first_page_as_root/context"
 require_relative "./scenarios/filename_config/context"
 require_relative "./scenarios/page_items_config/context"
 
+require_relative "./scenarios/invalid_config_keys/context"
+
 SUCCESS_EXAMPLE = "generate paginated pages correctly"
 FAILURE_EXAMPLE = "raises Jekyll::Errors::InvalidConfigurationError"
 
@@ -101,6 +103,12 @@ RSpec.describe(Coffeebrew::Jekyll::Paginate) do
           .once
 
         expect(Jekyll.logger).to have_received(:error).with("Errors:", match_array(expected_errors)).once
+      end
+    end
+
+    context CONTEXT_INVALID_CONFIG_KEYS do
+      include_context CONTEXT_INVALID_CONFIG_KEYS do
+        it_behaves_like FAILURE_EXAMPLE
       end
     end
   end
