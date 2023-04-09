@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="/coffeebrew_jekyll_paginate/assets/css/styles.css">
+    <title>0.1.0</title>
+  </head>
+  <body>
+    <script src="/coffeebrew_jekyll_paginate/assets/js/main.js"></script>
+    <nav id="top-nav" class="top-nav">
+  <a>Current: 0.1.0</a>
+  
+    <a href="/coffeebrew_jekyll_paginate/" >
+      Home
+    </a>
+  
+    <a href="/coffeebrew_jekyll_paginate/versions.html" >
+      Versions
+    </a>
+  
+  <a href="javascript:void(0);" class="icon" onclick="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
+  </a>
+</nav>
+
+    <div class="container">
+      <div id="table-of-contents">
+        <div class="versions">
+          <div>
+            Versions:
+            <select id="select-version" onchange="selectVersion()">
+              
+                <option selected="selected" value="/coffeebrew_jekyll_paginate/versions/0.1.0.html">0.1.0</option>
+              
+            </select>
+          </div>
+        </div>
+        <ul id="toc" class="toc">
+<li class="toc-entry toc-h2"><a href="#installation">Installation</a></li>
+<li class="toc-entry toc-h2"><a href="#configuration">Configuration</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#site-wide-defaults">Site-wide defaults</a></li>
+<li class="toc-entry toc-h3"><a href="#frontmatter-defaults-key-config">Frontmatter defaults key config</a></li>
+<li class="toc-entry toc-h3"><a href="#individual-page-pagination-config">Individual page pagination config</a></li>
+<li class="toc-entry toc-h3"><a href="#first-page-as-root-config">First page as root config</a></li>
+<li class="toc-entry toc-h3"><a href="#pagination-config">Pagination config</a></li>
+<li class="toc-entry toc-h3"><a href="#validation">Validation</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#layouts">Layouts</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#paginated-collection-page">Paginated collection page</a></li>
+<li class="toc-entry toc-h3"><a href="#paginated-collection-paginator">Paginated collection paginator</a></li>
+<li class="toc-entry toc-h3"><a href="#root-page">Root page</a></li>
+<li class="toc-entry toc-h3"><a href="#next-page">Next page</a></li>
+<li class="toc-entry toc-h3"><a href="#last-page">Last page</a></li>
+<li class="toc-entry toc-h3"><a href="#individual-page-paginator">Individual page paginator</a></li>
+<li class="toc-entry toc-h3"><a href="#individual-page">Individual page</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#contributing">Contributing</a></li>
+<li class="toc-entry toc-h2"><a href="#development">Development</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#source-directory-structure">Source directory structure</a></li>
+<li class="toc-entry toc-h3"><a href="#test-cases-directory-structure">Test cases directory structure</a></li>
+<li class="toc-entry toc-h3"><a href="#writing-test-cases">Writing test cases</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#license">License</a></li>
+</ul>
+      </div>
+      <div id="content">
+        <h1 id="jekyll-paginate-plugin">Jekyll Paginate Plugin</h1>
+
+<p>A Jekyll plugin to generate site pagination for collections.</p>
+
+<p><a href="https://github.com/coffeebrewapps/coffeebrew_jekyll_paginate/actions/workflows/ruby.yml"><img src="https://github.com/coffeebrewapps/coffeebrew_jekyll_paginate/actions/workflows/ruby.yml/badge.svg" alt="Continuous Integration" /></a> <a href="https://badge.fury.io/rb/coffeebrew_jekyll_paginate"><img src="https://badge.fury.io/rb/coffeebrew_jekyll_paginate.svg" alt="Gem Version" /></a></p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add this line to your site’s Gemfile:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'coffeebrew_jekyll_paginate'</span>
+</code></pre></div></div>
+
+<p>And then add this line to your site’s <code class="language-plaintext highlighter-rouge">_config.yml</code>:</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">plugins</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">coffeebrew_jekyll_paginate</span>
+</code></pre></div></div>
+
+<p>By default, the plugin doesn’t generate any pagination. You need to specify which collections to be paginated. For
+example,</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">coffeebrew_jekyll_paginate</span><span class="pi">:</span>
+  <span class="na">collections</span><span class="pi">:</span>
+    <span class="na">books</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<p>Assuming layouts have been setup (see more in <a href="#layouts">Layouts</a>), then, the plugin will generate paginated
+collections using the default config below:</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">individual_page_pagination</span><span class="pi">:</span> <span class="kc">false</span>
+<span class="na">frontmatter_defaults_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">paginated_%{collection_type}"</span>
+<span class="na">first_page_as_root</span><span class="pi">:</span>
+  <span class="na">enabled</span><span class="pi">:</span> <span class="kc">false</span>
+<span class="na">permalink</span><span class="pi">:</span> <span class="s">/:collection_type/:page_num_one_index</span>
+<span class="na">index_page</span><span class="pi">:</span> <span class="s2">"</span><span class="s">index"</span>
+<span class="na">per_page</span><span class="pi">:</span> <span class="m">5</span>
+<span class="na">sort_field</span><span class="pi">:</span> <span class="s2">"</span><span class="s">date"</span>
+<span class="na">sort_reverse</span><span class="pi">:</span> <span class="kc">true</span>
+<span class="na">page_num_label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">%{page_num_one_index}"</span>
+</code></pre></div></div>
+
+<p>An example of the generated directory structure is as such:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_site/
+├── books
+│   ├── 1
+│   │   ├── index.html
+│   └── 2
+│       └── index.html
+└── index.html
+</code></pre></div></div>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>You can configure for as many collections as needed, and configure a site-wide pagination config, or configure for each
+collection to use its own configuration. If there is no configuration for the site default, or the collection, the
+plugin will use the default values as previously mentioned.</p>
+
+<h3 id="site-wide-defaults">Site-wide defaults</h3>
+
+<p>For example, you can configure site-wide defaults that override the plugin’s defaults, which will be used for all the
+collections enabled.</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">coffeebrew_jekyll_paginate</span><span class="pi">:</span>
+  <span class="na">defaults</span><span class="pi">:</span>
+    <span class="na">individual_page_pagination</span><span class="pi">:</span> <span class="kc">true</span>
+    <span class="na">first_page_as_root</span><span class="pi">:</span>
+      <span class="na">enabled</span><span class="pi">:</span> <span class="kc">true</span>
+      <span class="na">permalink</span><span class="pi">:</span> <span class="s">/</span>
+      <span class="na">index_page</span><span class="pi">:</span> <span class="s">/:collection_type</span>
+    <span class="na">per_page</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">page_num_label</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Page</span><span class="nv"> </span><span class="s">%{page_num_one_index}"</span>
+  <span class="na">collections</span><span class="pi">:</span>
+    <span class="na">books</span><span class="pi">:</span>
+    <span class="na">posts</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<p>If you do override the configuration, the plugin will perform a simple validation on your overrides according to these rules:</p>
+
+<h3 id="frontmatter-defaults-key-config">Frontmatter defaults key config</h3>
+
+<p>This tells the plugin what is the key used for setting defaults. For example, the plugin will use <code class="language-plaintext highlighter-rouge">paginated_posts</code> for
+<code class="language-plaintext highlighter-rouge">posts</code> type by default, and this will allow Jekyll to lookup defaults for <code class="language-plaintext highlighter-rouge">type: "paginated_posts"</code> in <code class="language-plaintext highlighter-rouge">_config.yml</code>.</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">defaults</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">scope</span><span class="pi">:</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">paginated_posts"</span>
+    <span class="na">values</span><span class="pi">:</span>
+      <span class="na">layout</span><span class="pi">:</span> <span class="s2">"</span><span class="s">posts_index"</span>
+</code></pre></div></div>
+
+<h3 id="individual-page-pagination-config">Individual page pagination config</h3>
+
+<p>If set to <code class="language-plaintext highlighter-rouge">true</code>, this tells the plugin to generate previous/next pagination for individual collection pages. This is
+useful if you want to have individual page-level pagination to navigate to the previous or next page. For example:</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">layout</span><span class="pi">:</span> <span class="s">default</span>
+<span class="nn">---</span>
+<span class="s">&lt;h1&gt;Posts&lt;/h1&gt;</span>
+
+<span class="pi">{{</span> <span class="nv">content</span> <span class="pi">}}</span>
+
+<span class="s">&lt;div class="pagination"&gt;</span>
+  <span class="s">&lt;ul class="pager"&gt;</span>
+    <span class="s">&lt;li class="previous"&gt;</span>
+      <span class="s">&lt;a href="{{ page.paginator.previous_page_path }}"&gt;&lt; {{ page.paginator.previous_page.title }}&lt;/a&gt;</span>
+    <span class="s">&lt;/li&gt;</span>
+    <span class="s">&lt;li class="next"&gt;</span>
+      <span class="s">&lt;a href="{{ page.paginator.next_page_path }}"&gt;{{ page.paginator.next_page.title }} &gt;&lt;/a&gt;</span>
+    <span class="s">&lt;/li&gt;</span>
+  <span class="s">&lt;/ul&gt;</span>
+<span class="s">&lt;/div&gt;</span>
+
+</code></pre></div></div>
+
+<h3 id="first-page-as-root-config">First page as root config</h3>
+
+<p>This tells the plugin to generate the first page outside of the collection directory in the paginated set. For example,
+if there are 4 pages in the paginated books collection, then the first page will be rendered in <code class="language-plaintext highlighter-rouge">/books.html</code>, and the
+other pages will be rendered as <code class="language-plaintext highlighter-rouge">/books/2/index.html</code>, <code class="language-plaintext highlighter-rouge">/books/3/index.html</code> and <code class="language-plaintext highlighter-rouge">/books/4/index.html</code>.</p>
+
+<p>This will be useful if you want to have the first page as part of your root pages and include it in the navigation.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Allowed Value(s)</th>
+      <th>Default</th>
+      <th>Remark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>enabled</td>
+      <td>Boolean</td>
+      <td>false</td>
+      <td>If set to <code class="language-plaintext highlighter-rouge">true</code>, then the plugin will render the first page in a separate path as defined by the <code class="language-plaintext highlighter-rouge">permalink</code> and <code class="language-plaintext highlighter-rouge">index_page</code> below.</td>
+    </tr>
+    <tr>
+      <td>permalink</td>
+      <td>String</td>
+      <td>nil</td>
+      <td>The directory in which to generate the first page. Normally this will be <code class="language-plaintext highlighter-rouge">/</code> if you want it to be a root-level page.</td>
+    </tr>
+    <tr>
+      <td>index_page</td>
+      <td>String</td>
+      <td>nil</td>
+      <td>The filename of the first page. Normally this will be the name corresponding to the collection.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>If <code class="language-plaintext highlighter-rouge">enabled</code> is <code class="language-plaintext highlighter-rouge">false</code>, both <code class="language-plaintext highlighter-rouge">permalink</code> and <code class="language-plaintext highlighter-rouge">index_page</code> will be ignored, and the plugin will generate the first page
+the same way as the remaining pages.</p>
+
+<h3 id="pagination-config">Pagination config</h3>
+
+<p>This tells the plugin how to generate the pagination pages.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Allowed Value(s)</th>
+      <th>Default</th>
+      <th>Remark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>permalink</td>
+      <td>String</td>
+      <td>/:collection_type/:page_num_one_index</td>
+      <td>The directory in which to generate the page.</td>
+    </tr>
+    <tr>
+      <td>index_page</td>
+      <td>String</td>
+      <td>index</td>
+      <td>The filename of the page.</td>
+    </tr>
+    <tr>
+      <td>per_page</td>
+      <td>Integer</td>
+      <td>5</td>
+      <td>The number of collection items in each page.</td>
+    </tr>
+    <tr>
+      <td>sort_field</td>
+      <td>String</td>
+      <td>date</td>
+      <td>The field to be used to sort the collection for deterministic pagination.</td>
+    </tr>
+    <tr>
+      <td>sort_reverse</td>
+      <td>Boolean</td>
+      <td>true</td>
+      <td>The collection will be sorted in reverse if set to <code class="language-plaintext highlighter-rouge">true</code>.</td>
+    </tr>
+    <tr>
+      <td>page_num_label</td>
+      <td>String</td>
+      <td>%{page_num_one_index}</td>
+      <td>The format string for the page number label.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A few placeholders are available to be used in the <code class="language-plaintext highlighter-rouge">permalink</code>, <code class="language-plaintext highlighter-rouge">index_page</code> and <code class="language-plaintext highlighter-rouge">page_num_label</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>collection_type</td>
+      <td>This is the collection type current page, eg. <code class="language-plaintext highlighter-rouge">posts</code>.</td>
+    </tr>
+    <tr>
+      <td>page_num_zero_index</td>
+      <td>This will be the 0-index page number of the current page.</td>
+    </tr>
+    <tr>
+      <td>page_num_one_index</td>
+      <td>This will be the 1-index page number of the current page.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="validation">Validation</h3>
+
+<p>If the config overrides have invalid structure, keys or values, the plugin will raise a
+<code class="language-plaintext highlighter-rouge">Jekyll::Errors::InvalidConfigurationError</code> during build.</p>
+
+<h2 id="layouts">Layouts</h2>
+
+<p>The plugin does not provide a default layout. You will need to create your own layout in <code class="language-plaintext highlighter-rouge">_layouts</code> and configure the
+defaults in <code class="language-plaintext highlighter-rouge">_config.yml</code>, for example, if you want to paginate the <code class="language-plaintext highlighter-rouge">books</code> collection, then you need to configure
+the layout for the collection:</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">defaults</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">scope</span><span class="pi">:</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">paginated_books"</span>
+    <span class="na">values</span><span class="pi">:</span>
+      <span class="na">layout</span><span class="pi">:</span> <span class="s2">"</span><span class="s">books_pagination"</span>
+  <span class="pi">-</span> <span class="na">scope</span><span class="pi">:</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">books"</span>
+    <span class="na">values</span><span class="pi">:</span>
+      <span class="na">layout</span><span class="pi">:</span> <span class="s2">"</span><span class="s">book"</span>
+      <span class="na">permalink</span><span class="pi">:</span> <span class="s">/books/:name:output_ext</span>
+</code></pre></div></div>
+
+<p>As mentioned earlier, you need to set the <code class="language-plaintext highlighter-rouge">scope.type</code> here to match the <code class="language-plaintext highlighter-rouge">frontmatters_defaults_key</code> config of the
+plugin. Note that there are 2 layouts configured here, <code class="language-plaintext highlighter-rouge">books_pagination</code> is used for the paginated collection page,
+and <code class="language-plaintext highlighter-rouge">book</code> is used for the individual book page.</p>
+
+<p>In addition to Jekyll’s default page data, you can also use the additional page data and page’s paginator data generated
+by the plugin in the layout:</p>
+
+<h3 id="paginated-collection-page">Paginated collection page</h3>
+
+<p>Use <code class="language-plaintext highlighter-rouge">page</code> to access the fields below.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>title</td>
+      <td>Current page’s title.</td>
+    </tr>
+    <tr>
+      <td>collection</td>
+      <td>Current page’s collection.</td>
+    </tr>
+    <tr>
+      <td>collection_type</td>
+      <td>Current page’s collection type.</td>
+    </tr>
+    <tr>
+      <td>page_num_zero_index</td>
+      <td>Current page’s 0-index page number.</td>
+    </tr>
+    <tr>
+      <td>page_num_one_index</td>
+      <td>Current page’s 1-index page number.</td>
+    </tr>
+    <tr>
+      <td>page_num_label</td>
+      <td>Current page’s page number label.</td>
+    </tr>
+    <tr>
+      <td>full_url</td>
+      <td>Current page full url. Can be used to match the current window url for highlighting purpose.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="paginated-collection-paginator">Paginated collection paginator</h3>
+
+<p>Use <code class="language-plaintext highlighter-rouge">page.paginator</code> to acceess the fields below.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>total_pages</td>
+      <td>Total number of pages of the paginated collection.</td>
+    </tr>
+    <tr>
+      <td>pages</td>
+      <td>All the pages in the collection.</td>
+    </tr>
+    <tr>
+      <td>page_num_zero_index</td>
+      <td>Current page’s 0-index page number.</td>
+    </tr>
+    <tr>
+      <td>page_num_one_index</td>
+      <td>Current page’s 1-index page number.</td>
+    </tr>
+    <tr>
+      <td>page_num_label</td>
+      <td>Current page’s page number label.</td>
+    </tr>
+    <tr>
+      <td>collection</td>
+      <td>Current page’s collection.</td>
+    </tr>
+    <tr>
+      <td>collection_type</td>
+      <td>Current page’s collection type.</td>
+    </tr>
+    <tr>
+      <td>current_page</td>
+      <td>Current page.</td>
+    </tr>
+    <tr>
+      <td>current_page_path</td>
+      <td>Current page full url. Can be used to match the current window url for highlighting purpose.</td>
+    </tr>
+    <tr>
+      <td>previous_page</td>
+      <td>Previous page.</td>
+    </tr>
+    <tr>
+      <td>previous_page_path</td>
+      <td>Previous page full url. Can be used to generate navigation link.</td>
+    </tr>
+    <tr>
+      <td>next_page</td>
+      <td>Next page.</td>
+    </tr>
+    <tr>
+      <td>next_page_path</td>
+      <td>Next page full url. Can be used to generate navigation link.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>An example of the paginated collection page layout <code class="language-plaintext highlighter-rouge">books_pagination</code>:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+layout: default
+---
+<span class="nt">&lt;h1&gt;</span>Books<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"collection"</span><span class="nt">&gt;</span>
+
+{% for book in page.paginator.collection %}
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;span&gt;</span>{{ book.title }}<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;p&gt;</span>{{ book.excerpt }}<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+{% endfor %}
+<span class="nt">&lt;/div&gt;</span>
+
+{% if page.paginator.total_pages &gt; 1 %}
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"pagination"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"pager"</span><span class="nt">&gt;</span>
+    {% if page.paginator.previous_page %}
+    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"previous"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{ page.paginator.previous_page_path }}"</span><span class="nt">&gt;&lt;i</span> <span class="na">class=</span><span class="s">"fa-solid fa-arrow-left"</span><span class="nt">&gt;&lt;/i&gt;</span> Newer {{ page.paginator.collection_type | capitalize }}<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+    {% endif %}
+    {% if page.paginator.next_page %}
+    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"next"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{ page.paginator.next_page_path }}"</span><span class="nt">&gt;</span>Older {{ page.paginator.collection_type | capitalize }} <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">"fa-solid fa-arrow-right"</span><span class="nt">&gt;&lt;/i&gt;&lt;/a&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+    {% endif %}
+  <span class="nt">&lt;/ul&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+{% endif %}
+
+</code></pre></div></div>
+
+<p>The resulting index pages using the example configuration and layout are as such:</p>
+
+<h3 id="root-page">Root page</h3>
+
+<p>Generated at: <code class="language-plaintext highlighter-rouge">_site/books.html</code>.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"utf-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Books<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;h1&gt;</span>Books<span class="nt">&lt;/h1&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"collection"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;span&gt;</span>Harry Potter 7<span class="nt">&lt;/span&gt;</span>
+          <span class="nt">&lt;/div&gt;</span>
+          <span class="nt">&lt;p&gt;</span>This is the final book in the Harry Potter series.<span class="nt">&lt;/p&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;span&gt;</span>Harry Potter 6<span class="nt">&lt;/span&gt;</span>
+          <span class="nt">&lt;/div&gt;</span>
+          <span class="nt">&lt;p&gt;</span>This is the sixth book in the Harry Potter series.<span class="nt">&lt;/p&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;span&gt;</span>Harry Potter 5<span class="nt">&lt;/span&gt;</span>
+          <span class="nt">&lt;/div&gt;</span>
+          <span class="nt">&lt;p&gt;</span>This is the fifth book in the Harry Potter series.<span class="nt">&lt;/p&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"pagination"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"pager"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"next"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/books/2/index.html"</span><span class="nt">&gt;</span>Older Books <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">"fa-solid fa-arrow-right"</span><span class="nt">&gt;&lt;/i&gt;&lt;/a&gt;</span>
+          <span class="nt">&lt;/li&gt;</span>
+        <span class="nt">&lt;/ul&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<h3 id="next-page">Next page</h3>
+
+<p>Generated at: <code class="language-plaintext highlighter-rouge">_site/books/2/index.html</code>.</p>
+
+<p>Note: Header elements omitted for clarity.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;h1&gt;</span>Books<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"collection"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;span&gt;</span>Harry Potter 4<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;p&gt;</span>This is the fourth book in the Harry Potter series.<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;span&gt;</span>Harry Potter 3<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;p&gt;</span>This is the third book in the Harry Potter series.<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;span&gt;</span>Harry Potter 2<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;p&gt;</span>This is the second book in the Harry Potter series.<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"pagination"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"pager"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"previous"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/books.html"</span><span class="nt">&gt;&lt;i</span> <span class="na">class=</span><span class="s">"fa-solid fa-arrow-left"</span><span class="nt">&gt;&lt;/i&gt;</span> Newer Books<span class="nt">&lt;/a&gt;</span>
+      <span class="nt">&lt;/li&gt;</span>
+      <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"next"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/books/3/index.html"</span><span class="nt">&gt;</span>Older Books <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">"fa-solid fa-arrow-right"</span><span class="nt">&gt;&lt;/i&gt;&lt;/a&gt;</span>
+      <span class="nt">&lt;/li&gt;</span>
+    <span class="nt">&lt;/ul&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<h3 id="last-page">Last page</h3>
+
+<p>Generated at: <code class="language-plaintext highlighter-rouge">_site/books/3/index.html</code>.</p>
+
+<p>Note: Header elements omitted for clarity.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;h1&gt;</span>Books<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"collection"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;span&gt;</span>Harry Potter 1<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;p&gt;</span>This is the first book in the Harry Potter series.<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"pagination"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"pager"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"previous"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/books/2/index.html"</span><span class="nt">&gt;&lt;i</span> <span class="na">class=</span><span class="s">"fa-solid fa-arrow-left"</span><span class="nt">&gt;&lt;/i&gt;</span> Newer Books<span class="nt">&lt;/a&gt;</span>
+      <span class="nt">&lt;/li&gt;</span>
+    <span class="nt">&lt;/ul&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<h3 id="individual-page-paginator">Individual page paginator</h3>
+
+<p>Use <code class="language-plaintext highlighter-rouge">page.paginator</code> to access the fields below.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>collection_type</td>
+      <td>Current page’s collection type.</td>
+    </tr>
+    <tr>
+      <td>current_page</td>
+      <td>Current page.</td>
+    </tr>
+    <tr>
+      <td>current_page_path</td>
+      <td>Current page full url. Can be used to match the current window url for highlighting purpose.</td>
+    </tr>
+    <tr>
+      <td>previous_page</td>
+      <td>Previous page.</td>
+    </tr>
+    <tr>
+      <td>previous_page_path</td>
+      <td>Previous page full url. Can be used to generate navigation link.</td>
+    </tr>
+    <tr>
+      <td>next_page</td>
+      <td>Next page.</td>
+    </tr>
+    <tr>
+      <td>next_page_path</td>
+      <td>Next page full url. Can be used to generate navigation link.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>An example of the individual page layout <code class="language-plaintext highlighter-rouge">book</code>:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+layout: default
+---
+<span class="nt">&lt;h1&gt;</span>0.1.0<span class="nt">&lt;/h1&gt;</span>
+
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;span&gt;</span>{{ page.title }}<span class="nt">&lt;/span&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;p&gt;</span>{{ content }}<span class="nt">&lt;/p&gt;</span>
+
+{% if page.paginator %}
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"pagination"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"pager"</span><span class="nt">&gt;</span>
+    {% if page.paginator.previous_page %}
+    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"previous"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{ page.paginator.previous_page_path }}"</span><span class="nt">&gt;&lt;i</span> <span class="na">class=</span><span class="s">"fa-solid fa-arrow-left"</span><span class="nt">&gt;&lt;/i&gt;</span> Previous Book<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+    {% endif %}
+    {% if page.paginator.next_page %}
+    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"next"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{ page.paginator.next_page_path }}"</span><span class="nt">&gt;</span>Next Book <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">"fa-solid fa-arrow-right"</span><span class="nt">&gt;&lt;/i&gt;&lt;/a&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+    {% endif %}
+  <span class="nt">&lt;/ul&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+{% endif %}
+
+</code></pre></div></div>
+
+<p>The resulting page using the example configuration and layout are as such:</p>
+
+<h3 id="individual-page">Individual page</h3>
+
+<p>Generated at: <code class="language-plaintext highlighter-rouge">_site/books/book-1.html</code></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"utf-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Books<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;h1&gt;</span>Book 1<span class="nt">&lt;/h1&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;span&gt;</span>Book 1<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;p&gt;</span>This is book 1.<span class="nt">&lt;/p&gt;</span>
+
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"pagination"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"pager"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"next"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/books/book-2.html"</span><span class="nt">&gt;</span>Next Book <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">"fa-solid fa-arrow-right"</span><span class="nt">&gt;&lt;/i&gt;&lt;/a&gt;</span>
+          <span class="nt">&lt;/li&gt;</span>
+        <span class="nt">&lt;/ul&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<h2 id="contributing">Contributing</h2>
+
+<p>Contribution to the gem is very much welcome!</p>
+
+<ol>
+  <li>Fork it (https://github.com/coffeebrewapps/coffeebrew_jekyll_paginate/fork).</li>
+  <li>Create your feature branch (<code class="language-plaintext highlighter-rouge">git checkout -b my-new-feature</code>).</li>
+  <li>Make sure you have setup the repo correctly so that you can run RSpec and Rubocop on your changes. Read more under the <a href="#development">Development</a> section.</li>
+  <li>Commit your changes (<code class="language-plaintext highlighter-rouge">git commit -am 'Add some feature'</code>).</li>
+  <li>If you have added something that is worth mentioning in the README, please also update the README.md accordingly and commit the changes.</li>
+  <li>Push to the branch (<code class="language-plaintext highlighter-rouge">git push origin my-new-feature</code>).</li>
+  <li>Create a new Pull Request.</li>
+</ol>
+
+<p>The repo owner will try to respond to a new PR as soon as possible.</p>
+
+<h2 id="development">Development</h2>
+
+<p>We want to provide a robust gem as much as possible for the users, so writing test cases will be required for any new
+feature.</p>
+
+<p>If you are contributing to the gem, please make sure you have setup your development environment correctly so that
+RSpec and Rubocop can run properly.</p>
+
+<ol>
+  <li>After forking the repo, go into the repo directory (<code class="language-plaintext highlighter-rouge">cd coffeebrew_jekyll_paginate/</code>).</li>
+  <li>Make sure you have the correct Ruby version installed. This gem requires Ruby &gt;= 2.7.0.</li>
+  <li>Once you have the correct Ruby version, install the development dependencies (<code class="language-plaintext highlighter-rouge">bundle install</code>).</li>
+  <li>To test that you have everything installed correctly, run the test cases (<code class="language-plaintext highlighter-rouge">bundle exec rspec</code>).</li>
+  <li>You should see all test cases pass successfully.</li>
+</ol>
+
+<h3 id="source-directory-structure">Source directory structure</h3>
+
+<p>All the gem logic lives in the <code class="language-plaintext highlighter-rouge">/lib</code> directory:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lib
+├── coffeebrew_jekyll_paginate
+│   ├── config.yml
+│   ├── generator.rb
+│   ├── individual_paginator.rb
+│   ├── page.rb
+│   ├── page_drop.rb
+│   ├── paginator.rb
+│   ├── validator.rb
+│   └── version.rb
+└── coffeebrew_jekyll_paginate.rb
+</code></pre></div></div>
+
+<p>The files that are currently in the repo:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>File</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lib/coffeebrew_jekyll_paginate/config.yml</code></td>
+      <td>This contains the default configuration for the plugin to generate pagination.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lib/coffeebrew_jekyll_paginate/generator.rb</code></td>
+      <td>This is the generator that reads the configuration and generate pagination.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lib/coffeebrew_jekyll_paginate/individual_paginator.rb</code></td>
+      <td>This is the abstract model containing the pagination methods for individual pages.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lib/coffeebrew_jekyll_paginate/page.rb</code></td>
+      <td>This is the abstract model of the paginated collection pages.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lib/coffeebrew_jekyll_paginate/page_drop.rb</code></td>
+      <td>This is the page drop used by the paginator class so its methods can be used in Liquid template.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lib/coffeebrew_jekyll_paginate/paginator.rb</code></td>
+      <td>This is the abstract model containing the pagination methods for paginated collection pages.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lib/coffeebrew_jekyll_paginate/validator.rb</code></td>
+      <td>This validates the configuration.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lib/coffeebrew_jekyll_paginate/version.rb</code></td>
+      <td>This contains the version number of the gem.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lib/coffeebrew_jekyll_paginate.rb</code></td>
+      <td>This is the entry point of the gem, and it loads the dependencies.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="test-cases-directory-structure">Test cases directory structure</h3>
+
+<p>All the test cases and fixtures live in the <code class="language-plaintext highlighter-rouge">/spec</code> directory:</p>
+
+<p>Note: Some files have been omitted for clarity.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spec
+├── coffeebrew_jekyll_paginate_spec.rb
+├── dest
+├── fixtures
+│   ├── _books
+│   │   ├── 1997-06-26-harry-potter-1.md
+│   │   ├── 1998-07-02-harry-potter-2.md
+│   │   ├── 1999-07-08-harry-potter-3.md
+│   │   ├── 2000-07-08-harry-potter-4.md
+│   │   ├── 2003-06-21-harry-potter-5.md
+│   │   ├── 2005-07-16-harry-potter-6.md
+│   │   └── 2007-07-21-harry-potter-7.md
+│   ├── _layouts
+│   │   ├── book.html
+│   │   ├── default.html
+│   │   ├── paginated_books.html
+│   │   ├── paginated_posts.html
+│   │   └── post.html
+│   ├── _posts
+│   │   ├── 2021-03-12-test-post-1.md
+│   │   ├── 2021-03-28-test-post-2.md
+│   │   ├── 2021-05-03-test-post-3.md
+│   │   ├── 2021-05-03-test-post-4.md
+│   │   ├── 2022-01-27-test-post-5.md
+│   │   ├── 2022-03-12-test-post-6.md
+│   │   ├── 2022-11-23-test-post-7.md
+│   │   └── 2023-02-21-test-post-8.md
+│   └── _config.yml
+├── scenarios
+│   ├── default
+│   │   ├── _site
+│   │   │   ├── books
+│   │   │   │   ├── 1
+│   │   │   │   │   └── index.html
+│   │   │   │   ├── 2
+│   │   │   │   │   └── index.html
+│   │   │   │   ├── 1997-06-26-harry-potter-1.html
+│   │   │   │   ├── 1998-07-02-harry-potter-2.html
+│   │   │   │   ├── 1999-07-08-harry-potter-3.html
+│   │   │   │   ├── 2000-07-08-harry-potter-4.html
+│   │   │   │   ├── 2003-06-21-harry-potter-5.html
+│   │   │   │   ├── 2005-07-16-harry-potter-6.html
+│   │   │   │   └── 2007-07-21-harry-potter-7.html
+│   │   │   └── posts
+│   │   │       ├── 1
+│   │   │       │   └── index.html
+│   │   │       ├── 2
+│   │   │       │   └── index.html
+│   │   │       ├── 2021-03-12-test-post-1.html
+│   │   │       ├── 2021-03-28-test-post-2.html
+│   │   │       ├── 2021-05-03-test-post-3.html
+│   │   │       ├── 2021-05-03-test-post-4.html
+│   │   │       ├── 2022-01-27-test-post-5.html
+│   │   │       ├── 2022-03-12-test-post-6.html
+│   │   │       ├── 2022-11-23-test-post-7.html
+│   │   │       └── 2023-02-21-test-post-8.html
+│   │   └── context.rb
+│   └── invalid_config_keys
+│       └── context.rb
+└── spec_helper.rb
+</code></pre></div></div>
+
+<p>The files that are currently in the repo:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>File</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/coffeebrew_jekyll_paginate_spec.rb</code></td>
+      <td>This is the main RSpec file to be executed. It contains all the contexts of various scenarios.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/dest/</code></td>
+      <td>This directory is where generated files are located. It will be deleted immediately after each context is executed.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/fixtures/</code></td>
+      <td>This directory follows the Jekyll site source structure and contains the minimal files required to generate the paginated pages.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/fixtures/_books</code></td>
+      <td>This directory contains the test books, you can add more to it to test your new feature.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/fixtures/_posts</code></td>
+      <td>This directory contains the test posts, you can add more to it to test your new feature.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/scenarios/</code></td>
+      <td>This directory contains the expected files of various test scenarios.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/scenarios/&lt;scenario&gt;/</code></td>
+      <td>This is the scenario name.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/scenarios/&lt;scenario&gt;/_site/</code></td>
+      <td>This directory contains the expected paginated pages.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/scenarios/&lt;scenario&gt;/context.rb</code></td>
+      <td>This is the file that sets up the context for the test case.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">spec/spec_helper.rb</code></td>
+      <td>This contains RSpec configuration and certain convenience methods for the main RSpec file.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="writing-test-cases">Writing test cases</h3>
+
+<p>There is a certain convention to follow when writing new test scenarios. The recommendation is to use the rake tasks
+provided in the gem to generate the scenario files.</p>
+
+<p>For success scenarios, run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">exec </span>rake coffeebrew:jekyll:paginate:test:create_success[test_scenario]
+</code></pre></div></div>
+
+<p>This will generate a placeholder file and directory:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spec
+├── coffeebrew_jekyll_paginate_spec.rb
+├── scenarios
+│   └── test_scenario
+│       ├── _site
+│       └── context.rb
+└── spec_helper.rb
+</code></pre></div></div>
+
+<p>Where the <code class="language-plaintext highlighter-rouge">context.rb</code> file will be pre-populated:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="no">CONTEXT_TEST_SCENARIO</span> <span class="o">=</span> <span class="s2">"when using test_scenario config"</span>
+
+<span class="no">RSpec</span><span class="p">.</span><span class="nf">shared_context</span> <span class="no">CONTEXT_TEST_SCENARIO</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:scenario</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"test_scenario"</span> <span class="p">}</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:overrides</span><span class="p">)</span> <span class="p">{}</span> <span class="c1"># TODO: remove if unused</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:generated_files</span><span class="p">)</span> <span class="p">{}</span> <span class="c1"># TODO: remove if unused</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:expected_files</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">[</span>
+    <span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>For failure scenarios, run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">exec </span>rake coffeebrew:jekyll:paginate:test:create_failure[test_scenario]
+</code></pre></div></div>
+
+<p>This will generate a placeholder file and directory:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spec
+├── coffeebrew_jekyll_paginate_spec.rb
+├── scenarios
+│   └── test_scenario
+│       └── context.rb
+└── spec_helper.rb
+</code></pre></div></div>
+
+<p>Where the <code class="language-plaintext highlighter-rouge">context.rb</code> file will be pre-populated:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="no">CONTEXT_TEST_SCENARIO</span> <span class="o">=</span> <span class="s2">"when using test_scenario config"</span>
+
+<span class="no">RSpec</span><span class="p">.</span><span class="nf">shared_context</span> <span class="no">CONTEXT_TEST_SCENARIO</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:scenario</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"test_scenario"</span> <span class="p">}</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:generated_files</span><span class="p">)</span> <span class="p">{</span> <span class="p">[]</span> <span class="p">}</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:expected_files</span><span class="p">)</span> <span class="p">{</span> <span class="p">[]</span> <span class="p">}</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:overrides</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span>
+    <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="n">let</span><span class="p">(</span><span class="ss">:expected_errors</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">[</span>
+    <span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>If you do write other test cases that are not asserting the generated files like above, you can initiate your
+convention. The repo owner will evaluate the PR and accept the convention if it fits the repo existing convention, or
+will recommend an alternative if it doesn’t.</p>
+
+<h2 id="license">License</h2>
+
+<p>See the <a href="/coffeebrew_jekyll_paginate/license.html">LICENSE</a> file.</p>
+
+
+      </div>
+    </div>
+    <a class="back-to-top" href="#">
+      <i class="fa-solid fa-angle-up"></i>
+    </a>
+    <footer class="site-footer">
+      <div class="copyright">
+        <span>Coffee Brew Apps © 2023</span>
+      </div>
+      <div class="socials">
+        
+        <a href="https://github.com/coffeebrewapps/coffeebrew_jekyll_paginate" target="_blank"><i class="fa-brands fa-github"></i></a>
+        
+        <a href="https://www.linkedin.com/company/coffeebrewapps/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+        
+        <a href="mailto:coffeebrewapps+hi@gmail.com" target="_blank"><i class="fa-solid fa-envelope"></i></a>
+        
+      </div>
+      <div class="powered-by">
+        <div class="link">Powered by <a href="https://jekyllrb.com" target="_blank">Jekyll</a></div>
+        <div class="divider">|</div>
+        <div class="link">Theme by <a href="https://www.coffeebrewapps.com/coffeebrew_jekyll_docs/" target="_blank">Coffee Brew Apps</a></div>
+        <div class="divider">|</div>
+        <div class="link">Hosted by <a href="https://github.com" target="_blank">Github Pages</a></div>
+        <div class="divider">|</div>
+        <div class="link">Under <a href="/coffeebrew_jekyll_paginate/license.html" target="_blank">MIT License</a></div>
+      </div>
+    </footer>
+  </body>
+</html>
