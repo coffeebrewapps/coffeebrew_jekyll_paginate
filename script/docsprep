@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+require "logger"
+
+logger = Logger.new($stdout)
+logger.level = Logger::DEBUG
+
+version = ARGV[0]
+
+if version.nil?
+  logger.error "Missing version..."
+  exit 0
+end
+
+root_dir = File.expand_path("../", __dir__)
+
+index_src = File.join(root_dir, "README.md")
+index_src_content = File.read(index_src)
+index_src_content.gsub!("See the [LICENSE](LICENSE) file.", "See the [LICENSE]({{ site.baseurl }}/license.html) file.")
+
+# Build index.html from current README.md
+#
+index_dest = File.join(root_dir, "index.md")
+
+index_content = "---\n" \
+                "layout: default\n" \
+                "title: Home\n" \
+                "toc: true\n" \
+                "version: #{version}\n" \
+                "---\n" \
+                "#{index_src_content}"
+
+File.write(index_dest, index_content)
+
+logger.debug "Created #{index_dest}..."
+logger.debug File.read(index_dest)
+
+# Build _versions/${version}.md from current README.md
+#
+version_dest = File.join(root_dir, "_versions", "#{version}.md")
+
+version_content = "---\n" \
+                  "layout: version\n" \
+                  "toc: true\n" \
+                  "title: #{version}\n" \
+                  "version: #{version}\n" \
+                  "---\n" \
+                  "#{index_src_content}"
+
+File.write(version_dest, version_content)
+
+logger.debug "Created #{version_dest}..."
+logger.debug File.read(version_dest)
+
+# Build licences.md from current LICENSE
+#
+license_src = File.join(root_dir, "LICENSE")
+license_src_content = File.read(license_src)
+
+license_dest = File.join(root_dir, "license.md")
+
+license_content = "---\n" \
+                  "layout: default\n" \
+                  "toc: false\n" \
+                  "title: License\n" \
+                  "version: #{version}\n" \
+                  "---\n" \
+                  "#{license_src_content}"
+
+File.write(license_dest, license_content)
+
+logger.debug "Created #{license_dest}..."
+logger.debug File.read(license_dest)
+
+# Build versions.md from current CHANGELOG.md
+#
+changelog_src = File.join(root_dir, "CHANGELOG.md")
+changelog_src_content = File.read(changelog_src)
+
+changelog_src_content.gsub!(%r{https://github.com/coffeebrewapps/coffeebrew_jekyll_paginate/blob/v},
+                            "{{ site.baseurl }}/versions/")
+changelog_src_content.gsub!(%r{/README.md}, ".html")
+
+changelog_dest = File.join(root_dir, "versions.md")
+
+changelog_content = "---\n" \
+                    "layout: default\n" \
+                    "toc: false\n" \
+                    "title: Versions\n" \
+                    "version: #{version}\n" \
+                    "---\n" \
+                    "#{changelog_src_content}"
+
+File.write(changelog_dest, changelog_content)
+
+logger.debug "Created #{changelog_dest}..."
+logger.debug File.read(changelog_dest)

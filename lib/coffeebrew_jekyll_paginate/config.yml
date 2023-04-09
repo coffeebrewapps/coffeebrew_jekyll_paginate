@@ -1,0 +1,13 @@
+coffeebrew_jekyll_paginate:
+  defaults:
+    individual_page_pagination: false
+    frontmatter_defaults_key: "paginated_%{collection_type}"
+    first_page_as_root:
+      enabled: false
+    permalink: /:collection_type/:page_num_one_index
+    index_page: "index"
+    per_page: 5
+    sort_field: "date"
+    sort_reverse: true
+    page_num_label: "%{page_num_one_index}"
+  collections: []
